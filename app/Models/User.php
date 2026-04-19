@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,11 +9,9 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
      *
      * @var list<string>
      */
@@ -22,11 +19,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role', 
+        'phone',          
+        'locationCoordinates',
+        'isVerified',      
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
      * @var list<string>
      */
     protected $hidden = [
@@ -35,7 +34,6 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
      *
      * @return array<string, string>
      */
@@ -45,5 +43,30 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function donations()
+    {
+        return $this->hasMany(DonationItem::class, 'donor_id');
+    }
+
+    public function claims()
+    {
+        return $this->hasMany(ClaimRequest::class, 'receiver_id');
+    }
+
+    public function deliveries()
+    {
+        return $this->hasMany(DeliveryTask::class, 'volunteer_id');
+    }
+
+    public function receivedReviews()
+    {
+        return $this->hasMany(Review::class, 'reviewee_id');
+    }
+
+    public function getAverageRatingAttribute()
+    {
+        return number_format($this->receivedReviews()->avg('rating') ?: 0, 1);
     }
 }
