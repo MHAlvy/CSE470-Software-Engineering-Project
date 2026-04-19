@@ -14,3 +14,4 @@ A full-stack Laravel application designed to connect donors, receivers, and volu
 * **Frontend:** Blade Templating, Tailwind CSS
 * **Database:** MySQL
 * **Authentication:** Laravel Breeze
+<img width="1376" height="768" alt="crowdaid_hero_bg" src="https://github.com/user-attachments/assets/0ec4e0f3-5788-4fe1-b824-542aac7ea5d6" />
