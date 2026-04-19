@@ -1,6 +1,6 @@
 # CrowdAid - Community Donation Platform (CSE470 Project)
 
-A full-stack Laravel application designed to connect donors, receivers, and volunteer drivers to facilitate community mutual aid. 
+A full-stack Laravel application designed to connect donors, receivers and volunteer drivers to facilitate community mutual aid. 
 
 ## Features
 * **Role-Based Authentication:** Distinct dashboards for Donors, Receivers and Volunteers.
