@@ -32,8 +32,8 @@
 
                                 <div class="mb-4">
                                     <p class="text-sm text-gray-600 font-bold">DELIVER TO:</p>
-                                    <p class="text-sm">{{ $claim->receiver->name }} ({{ $claim->receiver->phone }})</p>
-                                    <p class="text-sm text-green-600 font-semibold">{{ $claim->receiver->locationCoordinates }}</p>
+                                    <p class="text-sm">{{ $claim?->receiver?->name ?? 'Pending Receiver' }} ({{ $claim?->receiver?->phone ?? 'N/A' }})</p>
+                                    <p class="text-sm text-green-600 font-semibold">{{ $claim?->receiver?->locationCoordinates ?? 'Pending Location' }}</p>
                                 </div>
 
                                 <form method="POST" action="{{ route('deliveries.update', $task->id) }}">
@@ -52,7 +52,7 @@
             </div>
 
             <h3 class="text-2xl font-bold mb-4">Available Delivery Tasks</h3>
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-8">
                 @if($availableTasks->isEmpty())
                     <p class="text-gray-500">No items currently need to be delivered in your area.</p>
                 @else
@@ -62,7 +62,7 @@
                             <div class="p-4 border rounded-md flex justify-between items-center bg-gray-50">
                                 <div>
                                     <h4 class="font-bold text-lg">{{ $donation->title }}</h4>
-                                    <p class="text-sm text-gray-600 mt-1"><strong>Route:</strong> {{ $donation->donor->locationCoordinates }} ➔ {{ $claim->receiver->locationCoordinates }}</p>
+                                    <p class="text-sm text-gray-600 mt-1"><strong>Route:</strong> {{ $donation->donor->locationCoordinates ?? 'N/A' }} ➔ {{ $claim?->receiver?->locationCoordinates ?? 'Pending Location' }}</p>
                                 </div>
                                 <form method="POST" action="{{ route('deliveries.accept', $donation->id) }}">
                                     @csrf
@@ -70,6 +70,39 @@
                                         Accept Task
                                     </button>
                                 </form>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
+            <h3 class="text-2xl font-bold mb-4 mt-8 text-gray-800">My Delivery History</h3>
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-12">
+                @php
+                    $history = \App\Models\DeliveryTask::where('volunteer_id', auth()->id())
+                                ->where('status', 'Delivered')
+                                ->orderBy('updated_at', 'desc')
+                                ->get();
+                @endphp
+
+                @if($history->isEmpty())
+                    <p class="text-gray-500 text-center">You haven't completed any deliveries yet. Your successful missions will appear here!</p>
+                @else
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($history as $item)
+                            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200 hover:shadow-md transition duration-300">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="text-lg font-bold text-gray-900">{{ $item->donation->title ?? 'Delivered Item' }}</h4>
+                                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-1 rounded-full border border-green-200">
+                                        Completed
+                                    </span>
+                                </div>
+                                <p class="text-sm text-gray-500 mb-4">
+                                    Delivered on: {{ $item->updated_at->format('M d, Y') }}
+                                </p>
+                                <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
+                                    <span class="text-sm font-bold text-indigo-600">✓ Mission Accomplished</span>
+                                </div>
                             </div>
                         @endforeach
                     </div>

@@ -68,21 +68,22 @@
                                     </span>
                                 </div>
                                 <span>{{ $donation->created_at->diffForHumans() }}</span>
-                                @if(Auth::user()->role === 'receiver')
-                                 <div class="mt-4">
-                                    <a href="{{ route('claims.create', $donation->id) }}" class="block w-full text-center bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 font-semibold transition">
-                                        Request to Claim
-                                    </a>
-                                 </div>
-                                @endif
-                                @if(Auth::user()->id === $donation->donor_id && $donation->status === 'Available')
-                                 <div class="mt-4">
-                                    <a href="{{ route('claims.index', $donation->id) }}" class="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 font-semibold transition">
-                                        View Requests
-                                     </a>
-                                 </div>
-                                @endif
                             </div>
+
+                            @if(Auth::user()->role === 'receiver')
+                             <div class="mt-4">
+                                <a href="{{ route('claims.create', $donation->id) }}" class="block w-full text-center bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 font-semibold transition">
+                                    Request to Claim
+                                </a>
+                             </div>
+                            @endif
+                            @if(Auth::user()->id === $donation->donor_id && $donation->status === 'Available')
+                             <div class="mt-4">
+                                <a href="{{ route('claims.index', $donation->id) }}" class="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 font-semibold transition">
+                                    View Requests
+                                 </a>
+                             </div>
+                            @endif
                         </div>
                     </div>
                 @empty
@@ -93,4 +94,41 @@
             </div>
         </div>
     </div>
+
+    @if(Auth::user()->role === 'donor')
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4 mb-12">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">My Donation History</h2>
+    
+        @php
+            $history = \App\Models\DonationItem::where('donor_id', auth()->id())->orderBy('created_at', 'desc')->get();
+        @endphp
+
+        @if($history->isEmpty())
+            <div class="bg-white rounded-lg p-6 border border-gray-200 text-center shadow-sm">
+                <p class="text-gray-500">You haven't posted any donations yet. Your future history will appear right here!</p>
+            </div>
+        @else
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($history as $item)
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200 hover:shadow-md transition duration-300">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-lg font-bold text-gray-900">{{ $item->title ?? $item->name ?? 'Donated Item' }}</h3>
+                            <span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-1 rounded-full border border-gray-200">
+                                {{ $item->category ?? 'Donation' }}
+                            </span>
+                        </div>
+                    
+                        <p class="text-sm text-gray-500 mb-4">
+                            Posted on: {{ $item->created_at->format('M d, Y') }}
+                        </p>
+                    
+                        <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
+                            <span class="text-sm font-bold text-indigo-600">✓ Recorded in Database</span>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
+    @endif
 </x-app-layout>

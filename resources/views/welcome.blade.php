@@ -37,7 +37,7 @@
                     "For the people. By the people. Of the people."
                 </p>
                 <p class="text-lg md:text-xl text-blue-100 font-light max-w-2xl mx-auto">
-                    A community-driven platform connecting donors, receivers, and volunteer drivers. We make mutual aid simple, secure, and transparent.
+                    A community-driven platform connecting donors, receivers and volunteer drivers. We make mutual aid simple, secure and transparent.
                 </p>
             </div>
             
